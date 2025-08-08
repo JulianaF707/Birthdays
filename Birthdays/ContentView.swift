@@ -1,17 +1,44 @@
 import SwiftUI
 
 struct ContentView: View {
-//    @State private var friends: [Friend] = [
-//        Friend(name: "Julia", birthday: .now) ,
-//        Friend(name: "Sammi", birthday: Date(timeIntervalSince1970: <#T##TimeInterval#>))
-//    ]
+    @State private var friends: [Friend] = [
+        Friend(name: "Julia", birthday: .now),
+        Friend(name: "Sammi", birthday: .now)
+    ]
+    @State private var newName = ""
+    @State private var newBirthday = Date.now
+    
     var body: some View {
-        VStack {
+        NavigationStack {
             
-            
-            
+            List(friends, id: \.name) { friend in
+                HStack {
+                    Text(friend.name)
+                    Spacer()
+                    Text(friend.birthday, format: .dateTime.month(.wide).day().year())
+                }
+            }
+            .navigationTitle("Birthdays")
+            .safeAreaInset(edge: .bottom){
+                VStack (alignment: .center) {
+                    Text("New Birthday")
+                        .font(.headline)
+                    DatePicker(selection: $newBirthday, in: Date.distantPast...Date.now, displayedComponents: .date) {
+                        TextField("Name", text: $newName )
+                            .textFieldStyle(.roundedBorder)
+                    }
+                    Button("Save") {
+                            let newFriend = Friend(name: newName, birthday: newBirthday)
+                            friends.append(newFriend)
+                            newName = ""
+                            newBirthday = .now
+                        }
+                    .bold()
+                }
+                .padding()
+                .background(.bar)
+            }
         }
-        .padding()
     }
 }
 
